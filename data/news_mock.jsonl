@@ -1,0 +1,19 @@
+{"symbol": "AAPL", "title": "Apple Inc. files 8-K regarding executive appointment", "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193", "time": "2026-07-03T22:30:00+00:00", "source": "sec", "summary": "Form 8-K filed"}
+
+{"symbol": "AAPL", "title": "Apple announces dividend record date", "url": "https://investor.apple.com/", "time": "2026-07-03T18:00:00+00:00", "source": "ir"}
+
+{"symbol": "MSFT", "title": "Microsoft Corp quarterly results press release", "url": "https://www.prnewswire.com/", "time": "2026-07-03T16:15:00+00:00", "source": "prnewswire"}
+
+{"symbol": "NVDA", "title": "NVIDIA partner ecosystem update", "url": "https://finnhub.io/api/news", "time": "2026-07-03T23:00:00+00:00", "source": "finnhub", "summary": "Aggregator headline only"}
+
+{"symbol": "TSLA", "title": "Tesla Inc. 8-K — vehicle delivery statistics", "url": "https://www.sec.gov/", "time": "2026-07-03T21:00:00+00:00", "source": "sec"}
+
+{"symbol": "GOOGL", "title": "Alphabet Inc. 8-K — board committee update", "url": "https://www.sec.gov/", "time": "2026-07-03T20:00:00+00:00", "source": "sec"}
+
+{"symbol": "META", "title": "Meta Platforms investor relations update", "url": "https://investor.meta.com/", "time": "2026-07-03T19:30:00+00:00", "source": "ir"}
+
+{"symbol": "AMZN", "title": "Amazon.com Inc. press release on AWS region", "url": "https://www.prnewswire.com/", "time": "2026-07-03T17:45:00+00:00", "source": "prnewswire"}
+
+{"symbol": "SPY", "title": "SPDR S&P 500 ETF trust filing summary", "url": "https://www.sec.gov/", "time": "2026-07-03T22:00:00+00:00", "source": "sec"}
+
+{"symbol": "QQQ", "title": "Invesco QQQ trust semi-annual report notice", "url": "https://www.sec.gov/", "time": "2026-07-03T21:30:00+00:00", "source": "sec"}

@@ -1,0 +1,13 @@
+cases:
+  - id: pm_aapl
+    profile: pm
+    symbols: AAPL
+  - id: pm_msft_nvda
+    profile: pm
+    symbols: MSFT,NVDA
+  - id: pm_googl
+    profile: pm
+    symbols: GOOGL
+  - id: pm_meta
+    profile: pm
+    symbols: META

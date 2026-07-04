@@ -1,0 +1,34 @@
+[project]
+name = "briefpaws"
+version = "0.0.2"
+description = "Evidence-backed pre-market briefs via LangGraph agents"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.0",
+  "yfinance>=0.2",
+  "jinja2>=3.1",
+  "python-dateutil>=2.8",
+  "tzdata>=2024.1",
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "langgraph>=0.2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pyyaml>=6.0"]
+obs = ["langfuse>=2.0"]
+
+[project.scripts]
+briefpaws = "briefpaws.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
