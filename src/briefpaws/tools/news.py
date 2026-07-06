@@ -8,9 +8,9 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from briefpaws.config import DATA_DIR, DEFAULT_TIMEZONE
-from briefpaws.schemas.run import NewsItem
+from briefpaws.schemas.run import EvidenceLevel, NewsItem
 
-_SOURCE_LEVEL = {
+_SOURCE_LEVEL: dict[str, EvidenceLevel] = {
     "sec": "filing",
     "edgar": "filing",
     "ir": "official",
@@ -63,7 +63,7 @@ def get_latest_news(
                     url=row["url"],
                     time=row["time"],
                     source=row.get("source", "unknown"),
-                    evidence_level=_SOURCE_LEVEL.get(src, "unknown"),  # type: ignore[arg-type]
+                    evidence_level=_SOURCE_LEVEL.get(src, "unknown"),
                     summary=row.get("summary"),
                 )
             )

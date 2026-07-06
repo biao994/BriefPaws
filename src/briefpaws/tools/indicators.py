@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from briefpaws.config import GAP_SIGMA_MULT, VOLUME_DRY_MULT, VOLUME_SPIKE_MULT
-from briefpaws.schemas.run import Indicators
+from briefpaws.schemas.run import Indicators, VolumeFlag
 
 
 def compute_indicators(frame: pd.DataFrame) -> Indicators:
@@ -36,7 +36,7 @@ def compute_indicators(frame: pd.DataFrame) -> Indicators:
             gap_sig = True
 
     vol_ratio = None
-    vol_flag: str = "unknown"
+    vol_flag: VolumeFlag = "unknown"
     if "Volume" in frame.columns and len(frame) >= 21:
         vol = frame["Volume"].astype(float)
         mean20 = float(vol.tail(21).iloc[:-1].mean())
@@ -58,6 +58,6 @@ def compute_indicators(frame: pd.DataFrame) -> Indicators:
         overnight_gap=gap,
         overnight_gap_significant=gap_sig,
         volume_ratio_20d=vol_ratio,
-        volume_flag=vol_flag,  # type: ignore[arg-type]
+        volume_flag=vol_flag,
         worst_1d_return_20d=worst_1d,
     )

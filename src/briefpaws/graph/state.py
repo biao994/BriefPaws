@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import TypedDict
 
-from briefpaws.schemas.run import RunDocument
+from briefpaws.schemas.run import Profile, RunDocument
 
 
 class ResearchState(TypedDict, total=False):
     symbols: list[str]
     range_str: str
-    profile: str
+    profile: Profile
     focus: str | None
     question: str | None
     theme: str | None

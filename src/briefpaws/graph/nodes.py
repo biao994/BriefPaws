@@ -27,7 +27,7 @@ def supervisor_node(state: ResearchState) -> dict:
         run_id = new_run_id()
         meta = RunMeta(
             run_id=run_id,
-            profile=profile,  # type: ignore[arg-type]
+            profile=profile,
             symbols=[s.upper() for s in state["symbols"]],
             range=state.get("range_str", "3M"),
             plan_variant=variant,

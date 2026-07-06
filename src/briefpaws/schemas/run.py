@@ -6,6 +6,10 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+EvidenceLevel = Literal["filing", "official", "aggregator", "unknown"]
+VolumeFlag = Literal["spike", "dry", "normal", "unknown"]
+Profile = Literal["quant", "pm"]
+
 
 class ToolRecord(BaseModel):
     name: str
@@ -20,7 +24,7 @@ class NewsItem(BaseModel):
     url: str
     time: str
     source: str
-    evidence_level: Literal["filing", "official", "aggregator", "unknown"] = "unknown"
+    evidence_level: EvidenceLevel = "unknown"
     summary: str | None = None
 
 
@@ -31,7 +35,7 @@ class Indicators(BaseModel):
     overnight_gap: float | None = None
     overnight_gap_significant: bool = False
     volume_ratio_20d: float | None = None
-    volume_flag: Literal["spike", "dry", "normal", "unknown"] = "unknown"
+    volume_flag: VolumeFlag = "unknown"
     worst_1d_return_20d: float | None = None
 
 
@@ -55,7 +59,7 @@ class SymbolResult(BaseModel):
 
 class RunMeta(BaseModel):
     run_id: str
-    profile: Literal["quant", "pm"] = "pm"
+    profile: Profile = "pm"
     symbols: list[str]
     range: str = "3M"
     timezone: str = "Asia/Shanghai"
