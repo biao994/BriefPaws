@@ -60,6 +60,7 @@ LangGraph 四节点：`Supervisor → Data → Analyst → Report`（`src/briefp
 | 根目录 | `pytest tests/ -q` | 全量测试（7 passed） |
 | 根目录 | `pytest tests/test_eval_dataset.py -v` | eval 4 case 硬断言 |
 | 根目录 | `pip install -e ".[dev]"` | 可编辑安装 + pytest |
+| 根目录 | `pip install -e ".[dev,obs]"` | 加上 Langfuse 观测（可选） |
 
 ## 仓库结构
 
@@ -75,7 +76,7 @@ BriefPaws/
     tools/
     schemas/
     storage/
-    observability/       # Langfuse stub
+    observability/       # langfuse_tracer（可选）
   templates/
   data/news_mock.jsonl
   tests/
