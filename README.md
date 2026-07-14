@@ -1,6 +1,6 @@
 # BriefPaws
 
-可审计的盘前研究简报：输入美股标的 → LangGraph 四节点编排 → 工具拉行情、算指标、读 mock 新闻 → 输出 `report.md` + `run.json`（数字与证据可回溯）。
+可审计的盘前/投委会研究简报：输入美股标的（可选研究问题）→ LangGraph 四节点编排 → 工具拉行情、算指标、读 mock 新闻 → 输出 report.md + run.json（数字与证据可回溯；含假设验证与 Reflection 护栏）。
 
 ## 核心能力
 
