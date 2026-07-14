@@ -29,6 +29,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--symbol", help="单只（兼容）")
     p.add_argument("--range", default=DEFAULT_RANGE)
     p.add_argument("--profile", choices=["pm"], default=DEFAULT_PROFILE)
+    p.add_argument("--question", help="pm 研究问题（有则切 pm_memo 模板）")
     p.add_argument("--out", type=Path, default=DEFAULT_OUT_DIR)
     return p
 
@@ -39,7 +40,12 @@ def main(argv: list[str] | None = None) -> int:
     out_dir: Path = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    doc, report_md = run_brief(symbols, range_str=args.range, profile=args.profile)
+    doc, report_md = run_brief(
+        symbols,
+        range_str=args.range,
+        profile=args.profile,
+        question=args.question,
+    )
     run_path = save_run(out_dir, doc, report_md)
 
     print(f"run_id={doc.meta.run_id}")

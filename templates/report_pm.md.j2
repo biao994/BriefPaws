@@ -1,0 +1,72 @@
+# 投委会备忘录（PM）
+
+**Run:** {{ meta.run_id }} | **Profile:** pm | **区间:** {{ meta.range }} | **状态:** {{ meta.status }}
+
+{% if sections.question %}
+**研究问题：** {{ sections.question }}
+{% endif %}
+
+---
+
+## 总览
+
+### Top 风险
+{% for x in sections.overview.top_risks %}
+- {{ x }}
+{% else %}
+- （无显著风险标记）
+{% endfor %}
+
+### Top 事件
+{% for x in sections.overview.top_events %}
+- {{ x }}
+{% else %}
+- （无隔夜官方/披露事件）
+{% endfor %}
+
+### 待核实
+{% for x in sections.overview.pending_verification %}
+- {{ x }}
+{% else %}
+- （无）
+{% endfor %}
+
+---
+
+{% for s in sections.symbols %}
+## {{ s.symbol }}
+
+### 核心观点
+{{ s.core_view }}
+
+### 催化剂（带证据链接）
+{% for line in s.catalysts %}
+- {{ line }}
+{% endfor %}
+
+### 异动与归因
+{% for line in s.move_attribution %}
+- {{ line }}
+{% endfor %}
+
+### 行情摘要（辅）
+{% for line in s.snapshot %}
+- {{ line }}
+{% endfor %}
+
+### 今日关注
+{% for line in s.watchlist %}
+- {{ line }}
+{% else %}
+- （无）
+{% endfor %}
+
+### 证据与局限
+{% for line in s.evidence_limits %}
+- {{ line }}
+{% endfor %}
+
+---
+{% endfor %}
+
+*非投资建议。PM 归因须带 citation；证据不足时仅作假设性讨论。*

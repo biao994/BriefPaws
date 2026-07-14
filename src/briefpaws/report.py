@@ -53,8 +53,13 @@ def render_report(doc: RunDocument, *, sections: dict | None = None) -> str:
         loader=FileSystemLoader(TEMPLATES_DIR),
         autoescape=select_autoescape(disabled_extensions=()),
     )
+    template_name = "report_pre_market.md.j2"
+    if doc.meta.profile == "quant":
+        template_name = "report_quant.md.j2"
+    elif doc.meta.profile == "pm" and doc.meta.plan_variant == "pm_memo":
+        template_name = "report_pm.md.j2"
     if sections is None:
         from briefpaws.brief_logic import analyst_sections
         sections, _ = analyst_sections(doc)
-    tpl = env.get_template("report_pre_market.md.j2")
+    tpl = env.get_template(template_name)
     return tpl.render(meta=doc.meta.model_dump(), sections=sections)

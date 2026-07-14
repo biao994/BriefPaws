@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -32,15 +31,14 @@ def _run_cli(case: dict, out: Path) -> Path:
         "--out",
         str(out),
     ]
+    if case.get("focus"):
+        cmd.extend(["--focus", case["focus"]])
+    if case.get("theme"):
+        cmd.extend(["--theme", case["theme"]])
+    if case.get("question"):
+        cmd.extend(["--question", case["question"]])
 
-    proc = subprocess.run(
-        cmd,
-        cwd=str(ROOT),
-        capture_output=True,
-        text=True,
-        timeout=120,
-        env={**os.environ, "BRIEFPAWS_DATA": "mock"},
-    )
+    proc = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True, timeout=120)
     assert proc.returncode in (0, 1), proc.stderr + proc.stdout
     return list(out.iterdir())[0]
 

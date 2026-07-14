@@ -1,0 +1,294 @@
+{
+  "meta": {
+    "run_id": "20260714T024103Z_3ae9494b",
+    "profile": "pm",
+    "symbols": [
+      "AAPL",
+      "MSFT",
+      "NVDA"
+    ],
+    "range": "3M",
+    "timezone": "Asia/Shanghai",
+    "plan_variant": "pm_memo",
+    "status": "completed",
+    "error_code": null,
+    "skipped_sections": [],
+    "evidence_gaps": [],
+    "degraded": false,
+    "tool_retries": 0,
+    "llm_retries": 0,
+    "question": "隔夜是否有影响开盘的披露？"
+  },
+  "plan": {
+    "steps": [
+      {
+        "step_id": "supervisor.plan",
+        "target_agent": "supervisor",
+        "tool_hint": "plan_variant",
+        "status": "done"
+      },
+      {
+        "step_id": "data.collect",
+        "target_agent": "data",
+        "tool_hint": "get_price_series, compute_indicators, get_latest_news",
+        "status": "done"
+      },
+      {
+        "step_id": "analyst.compute",
+        "target_agent": "analyst",
+        "tool_hint": "question-aware: 核心观点 / 催化剂 / 异动归因",
+        "status": "done"
+      },
+      {
+        "step_id": "report.render",
+        "target_agent": "report",
+        "tool_hint": "report template",
+        "status": "done"
+      }
+    ]
+  },
+  "tools": [
+    {
+      "name": "get_price_series",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "AAPL",
+        "range": "3M"
+      },
+      "output": {
+        "rows": 90
+      }
+    },
+    {
+      "name": "compute_indicators",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "AAPL"
+      },
+      "output": {
+        "return_3m": 0.27496577683996715,
+        "vol_20d_ann": 0.2697128538179742,
+        "mdd_3m": -0.08289005709404829,
+        "overnight_gap": 0.023694102853724308,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 0.9433927196311808,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.018676860343055157
+      }
+    },
+    {
+      "name": "get_latest_news",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "AAPL"
+      },
+      "output": {
+        "count": 2
+      }
+    },
+    {
+      "name": "get_price_series",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "MSFT",
+        "range": "3M"
+      },
+      "output": {
+        "rows": 90
+      }
+    },
+    {
+      "name": "compute_indicators",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "MSFT"
+      },
+      "output": {
+        "return_3m": 0.27408537817143985,
+        "vol_20d_ann": 0.16004229681583748,
+        "mdd_3m": -0.07617404034574327,
+        "overnight_gap": 0.0069301722117969256,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 0.7711911343038522,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.01674154787283566
+      }
+    },
+    {
+      "name": "get_latest_news",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "MSFT"
+      },
+      "output": {
+        "count": 1
+      }
+    },
+    {
+      "name": "get_price_series",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "NVDA",
+        "range": "3M"
+      },
+      "output": {
+        "rows": 90
+      }
+    },
+    {
+      "name": "compute_indicators",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "NVDA"
+      },
+      "output": {
+        "return_3m": -0.024251895286223735,
+        "vol_20d_ann": 0.19865145925097155,
+        "mdd_3m": -0.08292863051465937,
+        "overnight_gap": -0.005258630754150784,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 1.3792411956001984,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.020722354818265343
+      }
+    },
+    {
+      "name": "get_latest_news",
+      "status": "ok",
+      "error": null,
+      "input": {
+        "symbol": "NVDA"
+      },
+      "output": {
+        "count": 1
+      }
+    }
+  ],
+  "symbols": [
+    {
+      "symbol": "AAPL",
+      "status": "ok",
+      "error_code": null,
+      "skipped_sections": [],
+      "evidence_gaps": [],
+      "indicators": {
+        "return_3m": 0.27496577683996715,
+        "vol_20d_ann": 0.2697128538179742,
+        "mdd_3m": -0.08289005709404829,
+        "overnight_gap": 0.023694102853724308,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 0.9433927196311808,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.018676860343055157
+      },
+      "news": [
+        {
+          "title": "Apple Inc. files 8-K regarding executive appointment",
+          "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193",
+          "time": "2026-07-13T22:30:00+00:00",
+          "source": "sec",
+          "evidence_level": "filing",
+          "summary": "Form 8-K filed"
+        },
+        {
+          "title": "Apple announces dividend record date",
+          "url": "https://investor.apple.com/",
+          "time": "2026-07-13T18:00:00+00:00",
+          "source": "ir",
+          "evidence_level": "official",
+          "summary": null
+        }
+      ],
+      "triggers": [
+        {
+          "text": "若 官方披露「Apple Inc. files 8-K regarding executive…」被证实 → 则更新假设并纳入今日关注清单",
+          "evidence": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000320193"
+        }
+      ],
+      "one_line_conclusion": "Apple Inc. files 8-K regarding executive appointment",
+      "watchlist": []
+    },
+    {
+      "symbol": "MSFT",
+      "status": "ok",
+      "error_code": null,
+      "skipped_sections": [],
+      "evidence_gaps": [],
+      "indicators": {
+        "return_3m": 0.27408537817143985,
+        "vol_20d_ann": 0.16004229681583748,
+        "mdd_3m": -0.07617404034574327,
+        "overnight_gap": 0.0069301722117969256,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 0.7711911343038522,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.01674154787283566
+      },
+      "news": [
+        {
+          "title": "Microsoft Corp quarterly results press release",
+          "url": "https://www.prnewswire.com/",
+          "time": "2026-07-13T16:15:00+00:00",
+          "source": "prnewswire",
+          "evidence_level": "official",
+          "summary": null
+        }
+      ],
+      "triggers": [
+        {
+          "text": "若 官方披露「Microsoft Corp quarterly results press r…」被证实 → 则更新假设并纳入今日关注清单",
+          "evidence": "https://www.prnewswire.com/"
+        }
+      ],
+      "one_line_conclusion": "Microsoft Corp quarterly results press release",
+      "watchlist": []
+    },
+    {
+      "symbol": "NVDA",
+      "status": "ok",
+      "error_code": null,
+      "skipped_sections": [],
+      "evidence_gaps": [],
+      "indicators": {
+        "return_3m": -0.024251895286223735,
+        "vol_20d_ann": 0.19865145925097155,
+        "mdd_3m": -0.08292863051465937,
+        "overnight_gap": -0.005258630754150784,
+        "overnight_gap_significant": false,
+        "volume_ratio_20d": 1.3792411956001984,
+        "volume_flag": "normal",
+        "worst_1d_return_20d": -0.020722354818265343
+      },
+      "news": [
+        {
+          "title": "NVIDIA partner ecosystem update",
+          "url": "https://finnhub.io/api/news",
+          "time": "2026-07-13T23:00:00+00:00",
+          "source": "finnhub",
+          "evidence_level": "aggregator",
+          "summary": "Aggregator headline only"
+        }
+      ],
+      "triggers": [],
+      "one_line_conclusion": null,
+      "watchlist": []
+    }
+  ],
+  "overview": {
+    "top_risks": [],
+    "top_events": [
+      "AAPL: Apple Inc. files 8-K regarding executive appointment",
+      "MSFT: Microsoft Corp quarterly results press release",
+      "NVDA: NVIDIA partner ecosystem update"
+    ],
+    "pending_verification": []
+  }
+}

@@ -71,6 +71,7 @@ class RunMeta(BaseModel):
     degraded: bool = False
     tool_retries: int = 0
     llm_retries: int = 0
+    question: str | None = None
 
 
 class OverviewBlock(BaseModel):

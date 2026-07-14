@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -31,7 +30,6 @@ def test_cli_creates_run_artifacts(tmp_path: Path) -> None:
         capture_output=True,
         text=True,
         timeout=120,
-        env={**os.environ, "BRIEFPAWS_DATA": "mock"},
     )
     assert proc.returncode in (0, 1), proc.stderr + proc.stdout
     assert "run_id=" in proc.stdout

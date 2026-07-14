@@ -25,7 +25,9 @@ def build_plan(
     plan_variant: str = "pre_market_brief",
 ) -> RunPlan:
     analyst_hint = "build_triggers, overview aggregation"
-    if profile == "quant" and focus == "risk":
+    if profile == "pm" and question:
+        analyst_hint = "question-aware: 核心观点 / 催化剂 / 异动归因"
+    elif profile == "quant" and focus == "risk":
         analyst_hint = "risk-focused triggers + overview"
     return RunPlan(
         steps=[
@@ -154,24 +156,65 @@ def _symbol_snapshot_lines(sr: SymbolResult) -> list[str]:
     ]
 
 
+def _pm_catalysts(sr: SymbolResult) -> list[str]:
+    out: list[str] = []
+    for n in sr.news:
+        if n.evidence_level in ("filing", "official"):
+            out.append(f"{n.title} [{n.source}] {n.time} {n.url}")
+    for n in sr.news:
+        if n.evidence_level not in ("filing", "official") and len(out) < 3:
+            out.append(f"{n.title} [{n.source}] {n.time} {n.url}")
+    return out[:3] if out else ["暂无已核实催化剂（仅 aggregator 或未检索到披露）"]
+
+
+def _pm_move_attribution(sr: SymbolResult, question: str | None) -> list[str]:
+    if not sr.news:
+        return [EVIDENCE_INSUFFICIENT_PM]
+
+    parts: list[str] = []
+    ind = sr.indicators
+    if ind and ind.overnight_gap_significant:
+        parts.append(f"隔夜跳空 {_fmt_pct(ind.overnight_gap)}，需与披露/新闻交叉验证")
+    if ind and ind.volume_flag == "spike" and ind.volume_ratio_20d:
+        parts.append(f"成交量 {ind.volume_ratio_20d:.2f}x 于 20 日均值，关注是否事件驱动")
+    high_news = [n for n in sr.news if n.evidence_level in ("filing", "official")]
+    if high_news:
+        n = high_news[0]
+        parts.append(f"可关联官方披露：{n.title}（{n.url}）")
+    if question and parts:
+        parts[0] = f"针对「{question}」：{parts[0]}"
+    elif question:
+        parts.append(f"针对「{question}」：当前仅有量价信号，缺少可引用新闻/公告支撑确定性归因")
+    return parts[:3] if parts else ["暂无明显量价异动需归因"]
+
+
 def analyst_sections(doc: RunDocument) -> tuple[dict, list[ToolRecord]]:
     sections: dict = {
         "overview": doc.overview.model_dump(),
         "symbols": [],
+        "question": doc.meta.question,
     }
     for sr in doc.symbols:
         events = [f"{n.title} [{n.source}] {n.time} {n.url}" for n in sr.news[:3]]
         if not events and doc.meta.profile == "pm":
             events = [EVIDENCE_INSUFFICIENT_PM]
-        sections["symbols"].append(
-            {
-                "symbol": sr.symbol,
-                "one_line": sr.one_line_conclusion or "暂无高置信结论",
-                "snapshot": _symbol_snapshot_lines(sr)[:6],
-                "events": events[:3],
-                "watchlist": sr.watchlist[:3],
-                "triggers": [t.text + f"（证据：{t.evidence}）" for t in sr.triggers[:2]],
-                "gaps": sr.evidence_gaps[:2] or ["无"],
-            }
-        )
+        base = {
+            "symbol": sr.symbol,
+            "one_line": sr.one_line_conclusion or "暂无高置信结论",
+            "snapshot": _symbol_snapshot_lines(sr)[:6],
+            "events": events[:3],
+            "watchlist": sr.watchlist[:3],
+            "triggers": [t.text + f"（证据：{t.evidence}）" for t in sr.triggers[:2]],
+            "gaps": sr.evidence_gaps[:2] or ["无"],
+        }
+        if doc.meta.profile == "pm" and doc.meta.plan_variant == "pm_memo":
+            base.update(
+                {
+                    "core_view": sr.one_line_conclusion or "暂无高置信结论（需更多官方/披露证据）",
+                    "catalysts": _pm_catalysts(sr),
+                    "move_attribution": _pm_move_attribution(sr, doc.meta.question),
+                    "evidence_limits": sr.evidence_gaps[:2] or ["无显著证据缺口"],
+                }
+            )
+        sections["symbols"].append(base)
     return sections, []

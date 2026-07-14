@@ -1,13 +1,20 @@
+# L0 regression dataset — pm only（pm 主线）
 cases:
   - id: pm_aapl
     profile: pm
     symbols: AAPL
+    question: "隔夜是否有影响开盘的披露？"
+    subset: pm
   - id: pm_msft_nvda
     profile: pm
     symbols: MSFT,NVDA
+    subset: pm
   - id: pm_googl
     profile: pm
     symbols: GOOGL
+    question: "财报后首日复盘关注点"
+    subset: pm
   - id: pm_meta
     profile: pm
     symbols: META
+    subset: pm

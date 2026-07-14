@@ -14,10 +14,13 @@ def supervisor_node(state: ResearchState) -> dict:
     with node_span("supervisor"):
         profile = state["profile"]
         focus = state.get("focus")
+        question = state.get("question")
         theme = state.get("theme")
 
         variant = "pre_market_brief"
-        if profile == "quant" and focus == "event":
+        if profile == "pm" and state.get("question"):
+            variant = "pm_memo"
+        elif profile == "quant" and focus == "event":
             variant = "event_deep"
         elif profile == "quant" and focus == "risk":
             variant = "risk_only"
@@ -25,17 +28,18 @@ def supervisor_node(state: ResearchState) -> dict:
             variant = f"quant_{theme}"
 
         run_id = new_run_id()
+        plan = build_plan(profile, focus, question, plan_variant=variant)
+        for step in plan.steps:
+            if step.step_id == "supervisor.plan":
+                step.status = "done"
         meta = RunMeta(
             run_id=run_id,
             profile=profile,
             symbols=[s.upper() for s in state["symbols"]],
             range=state.get("range_str", "3M"),
             plan_variant=variant,
+            question=question,
         )
-        plan = build_plan(profile, focus, plan_variant=variant)
-        for step in plan.steps:
-            if step.step_id == "supervisor.plan":
-                step.status = "done"
         doc = RunDocument(meta=meta, plan=plan)
         return {"doc": doc}
 
