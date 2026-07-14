@@ -5,6 +5,7 @@ from __future__ import annotations
 from briefpaws.brief_logic import analyst_sections, build_plan, collect_symbol_data
 from briefpaws.graph.state import ResearchState
 from briefpaws.observability.langfuse_tracer import node_span
+from briefpaws.reflection import run_reflection, verify_pm_hypothesis
 from briefpaws.report import render_report
 from briefpaws.schemas.run import RunDocument, RunMeta
 from briefpaws.storage.runs import new_run_id
@@ -105,6 +106,8 @@ def analyst_node(state: ResearchState) -> dict:
         for step in doc.plan.steps:
             if step.step_id == "analyst.compute":
                 step.status = "done"
+        with node_span("reflection.check"):
+            doc.reflection = run_reflection(doc, sections)
         return {"sections": sections, "doc": doc}
 
 
@@ -118,6 +121,7 @@ def report_node(state: ResearchState) -> dict:
         for step in doc.plan.steps:
             if step.step_id == "report.render":
                 step.status = "running"
+        doc.hypothesis = verify_pm_hypothesis(doc)
         report_md = render_report(doc, sections=sections)
         for step in doc.plan.steps:
             if step.step_id == "report.render":

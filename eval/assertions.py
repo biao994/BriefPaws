@@ -85,6 +85,19 @@ def assert_pm_evidence_guard(run_json: dict, report_md: str) -> list[str]:
     return errors
 
 
+def assert_hypothesis_reflection(run_json: dict, report_md: str) -> list[str]:
+    errors: list[str] = []
+    meta = run_json.get("meta") or {}
+    if meta.get("profile") == "pm" and meta.get("question"):
+        if not run_json.get("hypothesis"):
+            errors.append("missing hypothesis for pm_memo with question")
+        elif "假设验证" not in report_md:
+            errors.append("hypothesis not in report.md")
+    if run_json.get("reflection") is None:
+        errors.append("missing reflection")
+    return errors
+
+
 def run_hard_assertions(run_dir: Path, profile: str) -> list[str]:
     errors = assert_artifacts_exist(run_dir)
     if errors:
@@ -95,4 +108,5 @@ def run_hard_assertions(run_dir: Path, profile: str) -> list[str]:
     errors.extend(assert_plan_steps(run_json))
     errors.extend(assert_numbers_traceable(run_json, report_md))
     errors.extend(assert_pm_evidence_guard(run_json, report_md))
+    errors.extend(assert_hypothesis_reflection(run_json, report_md))
     return errors

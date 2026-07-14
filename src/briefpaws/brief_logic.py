@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from briefpaws.analyst_llm import enhance_pm_core_view
 from briefpaws.config import EVIDENCE_INSUFFICIENT_PM
+from briefpaws.reflection import strip_definitive_wording
 from briefpaws.observability.langfuse_tracer import tool_span
 from briefpaws.schemas.run import (
     PlanStep,
@@ -188,33 +190,63 @@ def _pm_move_attribution(sr: SymbolResult, question: str | None) -> list[str]:
     return parts[:3] if parts else ["暂无明显量价异动需归因"]
 
 
-def analyst_sections(doc: RunDocument) -> tuple[dict, list[ToolRecord]]:
+def _build_symbol_section(
+    sr: SymbolResult,
+    doc: RunDocument,
+    extra_tools: list[ToolRecord],
+    *,
+    pev_fixup: bool = False,
+) -> dict:
+    events = [f"{n.title} [{n.source}] {n.time} {n.url}" for n in sr.news[:3]]
+    if not events and doc.meta.profile == "pm":
+        events = [EVIDENCE_INSUFFICIENT_PM]
+    base = {
+        "symbol": sr.symbol,
+        "one_line": sr.one_line_conclusion or "暂无高置信结论",
+        "snapshot": _symbol_snapshot_lines(sr)[:6],
+        "events": events[:3],
+        "watchlist": sr.watchlist[:3],
+        "triggers": [t.text + f"（证据：{t.evidence}）" for t in sr.triggers[:2]],
+        "gaps": sr.evidence_gaps[:2] or ["无"],
+    }
+    if doc.meta.profile == "pm" and doc.meta.plan_variant == "pm_memo":
+        core_view = sr.one_line_conclusion or "暂无高置信结论（需更多官方/披露证据）"
+        llm_core, llm_err = enhance_pm_core_view(sr, doc)
+        extra_tools.append(
+            ToolRecord(
+                name="llm.enhance_core_view",
+                status="ok" if llm_core else "skipped",
+                error=llm_err,
+                input={"symbol": sr.symbol},
+                output={"used": bool(llm_core)},
+            )
+        )
+        if llm_core:
+            core_view = llm_core
+        elif llm_err and llm_err not in ("LLM_DISABLED", "NOT_PM_MEMO"):
+            doc.meta.llm_retries += 1
+        if pev_fixup:
+            core_view = strip_definitive_wording(core_view)
+        base.update(
+            {
+                "core_view": core_view,
+                "catalysts": _pm_catalysts(sr),
+                "move_attribution": _pm_move_attribution(sr, doc.meta.question),
+                "evidence_limits": sr.evidence_gaps[:2] or ["无显著证据缺口"],
+            }
+        )
+    return base
+
+
+def analyst_sections(doc: RunDocument, *, pev_fixup: bool = False) -> tuple[dict, list[ToolRecord]]:
+    extra_tools: list[ToolRecord] = []
     sections: dict = {
         "overview": doc.overview.model_dump(),
         "symbols": [],
         "question": doc.meta.question,
     }
     for sr in doc.symbols:
-        events = [f"{n.title} [{n.source}] {n.time} {n.url}" for n in sr.news[:3]]
-        if not events and doc.meta.profile == "pm":
-            events = [EVIDENCE_INSUFFICIENT_PM]
-        base = {
-            "symbol": sr.symbol,
-            "one_line": sr.one_line_conclusion or "暂无高置信结论",
-            "snapshot": _symbol_snapshot_lines(sr)[:6],
-            "events": events[:3],
-            "watchlist": sr.watchlist[:3],
-            "triggers": [t.text + f"（证据：{t.evidence}）" for t in sr.triggers[:2]],
-            "gaps": sr.evidence_gaps[:2] or ["无"],
-        }
-        if doc.meta.profile == "pm" and doc.meta.plan_variant == "pm_memo":
-            base.update(
-                {
-                    "core_view": sr.one_line_conclusion or "暂无高置信结论（需更多官方/披露证据）",
-                    "catalysts": _pm_catalysts(sr),
-                    "move_attribution": _pm_move_attribution(sr, doc.meta.question),
-                    "evidence_limits": sr.evidence_gaps[:2] or ["无显著证据缺口"],
-                }
-            )
-        sections["symbols"].append(base)
-    return sections, []
+        sections["symbols"].append(
+            _build_symbol_section(sr, doc, extra_tools, pev_fixup=pev_fixup)
+        )
+    return sections, extra_tools

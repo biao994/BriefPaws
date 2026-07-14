@@ -1,6 +1,6 @@
 [project]
 name = "briefpaws"
-version = "0.0.2"
+version = "0.0.4"
 description = "Evidence-backed pre-market briefs via LangGraph agents"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -13,10 +13,12 @@ dependencies = [
   "numpy>=1.26",
   "pandas>=2.0",
   "langgraph>=0.2",
+  "python-dotenv>=1.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "pyyaml>=6.0"]
+llm = ["openai>=1.0"]
 obs = ["langfuse>=2.0,<3"]
 
 [project.scripts]

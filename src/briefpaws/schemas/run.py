@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 EvidenceLevel = Literal["filing", "official", "aggregator", "unknown"]
 VolumeFlag = Literal["spike", "dry", "normal", "unknown"]
 Profile = Literal["quant", "pm"]
+ReflectionDecision = Literal["pass", "rerun", "downgrade"]
 
 
 class ToolRecord(BaseModel):
@@ -72,6 +73,7 @@ class RunMeta(BaseModel):
     tool_retries: int = 0
     llm_retries: int = 0
     question: str | None = None
+    degraded_reason: str | None = None
 
 
 class OverviewBlock(BaseModel):
@@ -91,9 +93,29 @@ class RunPlan(BaseModel):
     steps: list[PlanStep] = Field(default_factory=list)
 
 
+class ReflectionCheck(BaseModel):
+    name: str
+    passed: bool
+    detail: str = ""
+
+
+class ReflectionResult(BaseModel):
+    passed: bool = True
+    checks: list[ReflectionCheck] = Field(default_factory=list)
+    decision: ReflectionDecision = "pass"
+
+
+class HypothesisVerification(BaseModel):
+    question: str | None = None
+    verdict: Literal["supported", "inconclusive", "unsupported"] = "inconclusive"
+    rationale: str = ""
+
+
 class RunDocument(BaseModel):
     meta: RunMeta
     plan: RunPlan = Field(default_factory=RunPlan)
     tools: list[ToolRecord] = Field(default_factory=list)
     symbols: list[SymbolResult] = Field(default_factory=list)
     overview: OverviewBlock = Field(default_factory=OverviewBlock)
+    reflection: ReflectionResult | None = None
+    hypothesis: HypothesisVerification | None = None

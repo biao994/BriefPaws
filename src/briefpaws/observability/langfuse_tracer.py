@@ -22,7 +22,7 @@ def _langfuse_enabled() -> bool:
 def _get_client():
     from langfuse import Langfuse
 
-    host = os.environ.get("LANGFUSE_HOST", "").strip() or None
+    host = os.environ.get("LANGFUSE_BASE_URL", "").strip() or None
     return Langfuse(host=host) if host else Langfuse()
 
 
@@ -43,6 +43,13 @@ def node_span(name: str) -> Generator[None, None, None]:
         yield
     finally:
         span.end()
+
+
+def reflection_event(decision: str) -> None:
+    trace = _active_trace.get()
+    if trace is None:
+        return
+    trace.event(name="reflection.decision", metadata={"decision": decision})
 
 
 def trace_brief_run(

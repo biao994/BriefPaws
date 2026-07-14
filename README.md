@@ -7,6 +7,8 @@
 - **CLI**：`briefpaws --symbols AAPL,MSFT --profile pm`；加 `--question` 切投委会备忘录
 - **LangGraph**：`Supervisor → Data → Analyst → Report` 四节点
 - **工具链**：yfinance 日 K（失败回退 mock）→ 6 项指标 → 隔夜窗 mock 新闻
+- **LLM（可选）**：有 `.env` 中 `OPENAI_API_KEY` 时润色 `core_view`，无则规则回退
+- **校验**：`hypothesis` 假设验证 + `reflection` 单轮护栏
 - **落盘**：`runs/<run_id>/run.json` + `report.md`，含 `plan.steps` 四步 `done`
 - **评测**：`eval/dataset.yaml` 4 case 硬断言回归
 
@@ -24,6 +26,8 @@ conda create -n briefpaws python=3.11 -y   # 首次
 conda activate briefpaws
 
 pip install -e ".[dev]"
+# 可选 LLM：复制 .env.example → .env 后
+# pip install -e ".[dev,llm]"
 ```
 
 ```powershell
@@ -63,19 +67,21 @@ python examples/pm_memo/generate_sample.py
 LangGraph 四节点：`Supervisor → Data → Analyst → Report`（`src/briefpaws/graph/`）
 
 - 无 `--question`：`plan_variant=pre_market_brief` + `report_pre_market.md.j2`
-- 有 `--question`：`plan_variant=pm_memo` + `report_pm.md.j2`
-- `run.json` 含 `plan.steps`，4 步 `status=done`
-- Langfuse span 可选（无 key 时 no-op）
+- 有 `--question`：`plan_variant=pm_memo` + `report_pm.md.j2`；报告含「假设验证」
+- `run.json` 含 `plan.steps`、`hypothesis`、`reflection`
+- Langfuse span 可选（无 key 时 no-op）；密钥见 `.env.example`
 
 ## 常用命令
 
 | 目录 | 命令 | 说明 |
 |------|------|------|
 | 根目录 | `conda activate briefpaws` | 进入项目环境 |
-| 根目录 | `pytest tests/ -q` | 全量测试（8 passed） |
+| 根目录 | `pytest tests/ -q` | 全量测试（约 11 passed） |
 | 根目录 | `pytest tests/test_pm_memo.py -v` | pm_memo 回归 |
+| 根目录 | `pytest tests/test_reflection_hypothesis.py -v` | hypothesis / Reflection |
 | 根目录 | `pytest tests/test_eval_dataset.py -v` | eval 4 case 硬断言 |
 | 根目录 | `pip install -e ".[dev]"` | 可编辑安装 + pytest |
+| 根目录 | `pip install -e ".[dev,llm]"` | 加上 OpenAI 兼容 LLM |
 | 根目录 | `pip install -e ".[dev,obs]"` | 加上 Langfuse 观测（可选） |
 
 ## 仓库结构
